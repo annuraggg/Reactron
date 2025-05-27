@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { IconClipboardTextFilled, IconFolderFilled } from "@tabler/icons-react";
 import useWindowStore from "../../store/windowStore";
 import { createNotepadWindow } from "../../apps/Notepad/Notepad";
+import FileExplorer from "../../apps/FileExplorer/FileExplorer";
 
 const Dock = () => {
   const { addWindow, focusWindow, minimizeWindow, windows } = useWindowStore();
@@ -20,6 +21,25 @@ const Dock = () => {
       const notepadWindow = createNotepadWindow();
       addWindow(notepadWindow);
     }
+  };
+
+  const handleFileExplorerClick = () => {
+    const explorerWindow = {
+      id: `explorer-${Date.now()}`,
+      title: "File Explorer",
+      content: <FileExplorer />,
+      icon: <IconFolderFilled color="#feca3c" />,
+      width: 440,
+      height: 520,
+      x: 120 + Math.random() * 200,
+      y: 120 + Math.random() * 150,
+      isFocused: true,
+      isMaximized: false,
+      isMinimized: false,
+      zIndex: 1,
+      resizable: true,
+    };
+    addWindow(explorerWindow);
   };
 
   const handleAppClick = (window: any) => {
@@ -47,7 +67,14 @@ const Dock = () => {
       <div className="justify-self-start"></div>
       <div className="justify-self-center flex items-center justify-center">
         <DockItem icon="logo.png" label="Home" />
-        <DockItem icon={<IconFolderFilled color="#feca3c" />} label="Files" />
+        <DockItem
+          icon={<IconFolderFilled color="#feca3c" />}
+          label="Files"
+          onClick={handleFileExplorerClick}
+          hasIndicator={false}
+          isFocused={false}
+          isMinimized={false}
+        />
         <DockItem
           icon={<IconClipboardTextFilled color="#5ac1df" />}
           label="Notepad"
