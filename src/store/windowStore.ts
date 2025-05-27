@@ -5,6 +5,7 @@ type Window = {
   title: string;
   content: React.ReactNode;
   icon?: React.ReactNode;
+  appType?: string;
   width?: number;
   height?: number;
   x?: number;
@@ -14,7 +15,6 @@ type Window = {
   isMinimized?: boolean;
   zIndex?: number;
   resizable?: boolean;
-
   prevState?: {
     x: number;
     y: number;
@@ -41,6 +41,8 @@ type WindowStore = {
     id: string,
     size: { width: number; height: number }
   ) => void;
+  bringToFront: (id: string) => void;
+  sendToBack: (id: string) => void;
 };
 
 const useWindowStore = create<WindowStore>((set, get) => ({
@@ -153,6 +155,29 @@ const useWindowStore = create<WindowStore>((set, get) => ({
         w.id === id ? { ...w, width: size.width, height: size.height } : w
       ),
     }));
+  },
+
+  bringToFront: (id) => {
+    const { nextZIndex } = get();
+    set((state) => ({
+      windows: state.windows.map((w) =>
+        w.id === id
+          ? { ...w, zIndex: nextZIndex, isFocused: true }
+          : { ...w, isFocused: false }
+      ),
+      nextZIndex: nextZIndex + 1,
+    }));
+  },
+
+  sendToBack: (id) => {
+    set((state) => {
+      const minZ = Math.min(...state.windows.map((w) => w.zIndex || 0));
+      return {
+        windows: state.windows.map((w) =>
+          w.id === id ? { ...w, zIndex: minZ - 1, isFocused: false } : w
+        ),
+      };
+    });
   },
 }));
 
