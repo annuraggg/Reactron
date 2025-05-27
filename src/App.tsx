@@ -4,7 +4,7 @@ import WindowManager from "./components/WindowManager/WindowManager";
 import useWindowStore from "./store/windowStore";
 import { motion, AnimatePresence } from "framer-motion";
 
-const BOOT_MIN_DURATION = 3000;
+const BOOT_MIN_DURATION = 7000;
 
 const BootScreen = () => (
   <motion.div
@@ -98,9 +98,26 @@ const App = () => {
     updateWindowSize,
   } = useWindowStore();
 
+  const waitForAllAssets = () =>
+    new Promise<void>((resolve) => {
+      if (document.readyState === "complete") {
+        resolve();
+      } else {
+        window.addEventListener("load", () => {
+          setTimeout(() => resolve(), 300);
+        });
+      }
+    });
+
   useEffect(() => {
     const doBoot = async () => {
-      await new Promise((r) => setTimeout(r, 1000));
+      const minBootTime = new Promise((r) =>
+        setTimeout(r, BOOT_MIN_DURATION - (Date.now() - bootStartTime))
+      );
+      const assetLoad = waitForAllAssets();
+
+      await Promise.all([minBootTime, assetLoad]);
+
       addWindow({
         id: "welcome",
         title: "Welcome",
@@ -111,13 +128,10 @@ const App = () => {
         x: 200,
         y: 140,
       });
-      const elapsed = Date.now() - bootStartTime;
-      if (elapsed < BOOT_MIN_DURATION) {
-        setTimeout(() => setBooting(false), BOOT_MIN_DURATION - elapsed);
-      } else {
-        setBooting(false);
-      }
+
+      setBooting(false);
     };
+
     doBoot();
   }, [addWindow, bootStartTime]);
 
