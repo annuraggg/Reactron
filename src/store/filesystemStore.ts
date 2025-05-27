@@ -6,6 +6,7 @@ export type FileNode = {
   name: string;
   type: "file" | "folder";
   content?: string;
+  url?: string;
   children?: FileNode[];
   createdAt: string;
   updatedAt: string;
@@ -16,7 +17,12 @@ type FileSystemStore = {
   currentPath: string[];
   setCurrentPath: (path: string[]) => void;
   getNodeByPath: (path: string[]) => FileNode | null;
-  createFile: (path: string[], name: string, content?: string) => void;
+  createFile: (
+    path: string[],
+    name: string,
+    content?: string,
+    url?: string
+  ) => void;
   createFolder: (path: string[], name: string) => void;
   renameNode: (path: string[], newName: string) => void;
   deleteNode: (path: string[]) => void;
@@ -75,6 +81,54 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
         updatedAt: new Date().toISOString(),
         content: "# Hello WebOS",
       },
+      {
+        id: uuid(),
+        name: "sample1.jpg",
+        type: "file",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        url: "/images/sample1.jpg",
+      },
+      {
+        id: uuid(),
+        name: "sample2.jpg",
+        type: "file",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        url: "/images/sample2.jpg",
+      },
+      {
+        id: uuid(),
+        name: "sample3.png",
+        type: "file",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        url: "/images/sample3.png",
+      },
+      {
+        id: uuid(),
+        name: "sample4.webp",
+        type: "file",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        url: "/images/sample4.webp",
+      },
+      {
+        id: uuid(),
+        name: "video1.mp4",
+        type: "file",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        url: "/videos/video1.mp4",
+      },
+      {
+        id: uuid(),
+        name: "video2.mp4",
+        type: "file",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        url: "/videos/video2.mp4",
+      },
     ],
   },
   currentPath: [],
@@ -82,7 +136,7 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
 
   getNodeByPath: (path) => findNode(get().root, path),
 
-  createFile: (path, name, content = "") => {
+  createFile: (path, name, content = "", url) => {
     set((state) => {
       const parent = findNode(state.root, path);
       if (!parent || parent.type !== "folder") return {};
@@ -93,6 +147,7 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
         name,
         type: "file",
         content,
+        url,
         createdAt: now,
         updatedAt: now,
       };

@@ -1,3 +1,13 @@
 export const extensionToApp: Record<string, string> = {
   txt: "notepad",
+  jpg: "imageviewer",
+  jpeg: "imageviewer",
+  png: "imageviewer",
+  webp: "imageviewer",
+  gif: "imageviewer",
+  bmp: "imageviewer",
+  svg: "imageviewer",
+  mp4: "videoplayer",
+  webm: "videoplayer",
+  mov: "videoplayer",
 };

@@ -200,7 +200,7 @@ const WindowManager: React.FC<WindowManagerProps> = ({
         key={title}
         tabIndex={-1}
         className={clsx(
-          "fixed flex flex-col shadow-2xl border border-zinc-800 bg-zinc-900",
+          "fixed flex flex-col shadow-2xl border border-zinc-800 bg-zinc-900 text-white",
           isFocused ? "bg-zinc-900" : "bg-zinc-900/90",
           isMaximized && "rounded-none",
           !isMaximized && "rounded-xl",
