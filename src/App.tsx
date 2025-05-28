@@ -84,9 +84,58 @@ const BootScreen = () => (
   </motion.div>
 );
 
+type FullscreenPromptProps = {
+  onAccept: () => void;
+  onDecline: () => void;
+};
+
+const FullscreenPrompt = ({ onAccept, onDecline }: FullscreenPromptProps) => (
+  <div
+    className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/90 backdrop-opacity-10"
+    style={{ backdropFilter: "blur(3px)" }}
+  >
+    <div className="bg-black/70 text-white rounded-lg p-8 shadow-lg flex flex-col items-center">
+      <img src="/logo.png" alt="Logo" width={56} height={56} className="mb-4" />
+      <h2 className="text-xl font-semibold mb-2 text-white">
+        Go Fullscreen?
+      </h2>
+      <p className="text-gray-300 mb-6 text-center">
+        For the best experience, would you like to switch to fullscreen mode?
+      </p>
+      <div className="flex gap-4">
+        <button
+          onClick={onAccept}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        >
+          Yes, go fullscreen
+        </button>
+        <button
+          onClick={onDecline}
+          className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+        >
+          No, continue
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const requestFullscreen = () => {
+  const el = document.documentElement as HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void>;
+    mozRequestFullScreen?: () => Promise<void>;
+    msRequestFullscreen?: () => Promise<void>;
+  };
+  if (el.requestFullscreen) el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+  else if (el.msRequestFullscreen) el.msRequestFullscreen();
+};
+
 const App = () => {
   const [booting, setBooting] = useState(true);
   const [bootStartTime] = useState(Date.now());
+  const [showFullscreenPrompt, setShowFullscreenPrompt] = useState(false);
   const windows = useWindowStore((state) => state.windows);
   const {
     addWindow,
@@ -115,9 +164,7 @@ const App = () => {
         setTimeout(r, BOOT_MIN_DURATION - (Date.now() - bootStartTime))
       );
       const assetLoad = waitForAllAssets();
-
       await Promise.all([minBootTime, assetLoad]);
-
       addWindow({
         id: "welcome",
         title: "Welcome",
@@ -128,45 +175,63 @@ const App = () => {
         x: 200,
         y: 140,
       });
-
       setBooting(false);
+      setShowFullscreenPrompt(true);
     };
-
     doBoot();
   }, [addWindow, bootStartTime]);
+
+  const handleFullscreenAccept = () => {
+    requestFullscreen();
+    setShowFullscreenPrompt(false);
+  };
+
+  const handleFullscreenDecline = () => {
+    setShowFullscreenPrompt(false);
+  };
 
   return (
     <div>
       <AnimatePresence>{booting && <BootScreen key="boot" />}</AnimatePresence>
       {!booting && (
         <>
-          <Desktop />
-          {windows.map((window) => (
-            <WindowManager
-              key={window.id}
-              title={window.title}
-              icon={window.icon}
-              isFocused={window.isFocused || false}
-              isMaximized={window.isMaximized || false}
-              isMinimized={window.isMinimized || false}
-              zIndex={window.zIndex || 1}
-              position={{ x: window.x || 100, y: window.y || 100 }}
-              size={{
-                width: window.width || 500,
-                height: window.height || 400,
-              }}
-              onFocus={() => focusWindow(window.id)}
-              onMaximize={() => maximizeWindow(window.id)}
-              onMinimize={() => minimizeWindow(window.id)}
-              onClose={() => closeWindow(window.id)}
-              onPositionChange={(position) =>
-                updateWindowPosition(window.id, position)
-              }
-              onSizeChange={(size) => updateWindowSize(window.id, size)}
-            >
-              {window.content}
-            </WindowManager>
-          ))}
+          {showFullscreenPrompt && (
+            <FullscreenPrompt
+              onAccept={handleFullscreenAccept}
+              onDecline={handleFullscreenDecline}
+            />
+          )}
+          {!showFullscreenPrompt && (
+            <>
+              <Desktop />
+              {windows.map((window) => (
+                <WindowManager
+                  key={window.id}
+                  title={window.title}
+                  icon={window.icon}
+                  isFocused={window.isFocused || false}
+                  isMaximized={window.isMaximized || false}
+                  isMinimized={window.isMinimized || false}
+                  zIndex={window.zIndex || 1}
+                  position={{ x: window.x || 100, y: window.y || 100 }}
+                  size={{
+                    width: window.width || 500,
+                    height: window.height || 400,
+                  }}
+                  onFocus={() => focusWindow(window.id)}
+                  onMaximize={() => maximizeWindow(window.id)}
+                  onMinimize={() => minimizeWindow(window.id)}
+                  onClose={() => closeWindow(window.id)}
+                  onPositionChange={(position) =>
+                    updateWindowPosition(window.id, position)
+                  }
+                  onSizeChange={(size) => updateWindowSize(window.id, size)}
+                >
+                  {window.content}
+                </WindowManager>
+              ))}
+            </>
+          )}
         </>
       )}
     </div>

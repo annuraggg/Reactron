@@ -155,6 +155,6 @@
     }, []);
 
     return (
-        <div ref={dosRef} className="flex items-center justify-center bg-red-500" />
+        <div ref={dosRef} className="flex items-center justify-center" />
     );
     }
