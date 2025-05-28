@@ -7,6 +7,8 @@ import {
 } from "@tabler/icons-react";
 import ImageViewer from "../apps/ImageViewer/ImageViewer";
 import VideoPlayer from "../apps/VideoPlayer/VideoPlayer";
+import VsCode from "../apps/VSCode/VSCode";
+import VsCodeIcon from "../apps/VSCode/VSCodeIcon";
 
 export function launchAppForFile(
   node: any,
@@ -90,6 +92,28 @@ export function launchAppForFile(
           onClose={onClose}
         />
       ),
+    });
+    return;
+  }
+
+  if (appKey === "vscode") {
+    addWindow({
+      id: `vscode-${Date.now()}`,
+      title: node.name + " - VSCode",
+      content: (
+        <VsCode
+          fileName={node.name}
+          initialValue={node.content || ""}
+        />
+      ),
+      icon: <VsCodeIcon />,
+      width: 900,
+      height: 600,
+      isFocused: true,
+      isMaximized: false,
+      isMinimized: false,
+      zIndex: 10,
+      resizable: true,
     });
     return;
   }

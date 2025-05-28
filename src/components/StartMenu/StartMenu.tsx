@@ -9,6 +9,8 @@ import Browser from "../../apps/Browser/Browser";
 import { IconClipboardTextFilled, IconFolderFilled } from "@tabler/icons-react";
 import useWindowStore from "../../store/windowStore";
 import TaskManager from "../../apps/TaskManager/TaskManager";
+import VsCode from "../../apps/VSCode/VSCode";
+import VsCodeIcon from "../../apps/VSCode/VSCodeIcon";
 
 export type StartMenuApp = {
   name: string;
@@ -125,8 +127,34 @@ export default function StartMenu({
           isMaximized: false,
           isMinimized: false,
           zIndex: 1,
+
           resizable: true,
           appType: "taskmanager",
+        });
+      },
+    },
+    {
+      name: "VSCode",
+      icon: <VsCodeIcon />, // You can use any VSCode SVG/icon
+      action: () => {
+        onClose();
+        addWindow({
+          id: `vscode-${Date.now()}`,
+          title: "VSCode",
+          content: (
+            <VsCode fileName="untitled.txt" initialValue="// Start coding!" />
+          ),
+          icon: <VsCodeIcon />,
+          width: 900,
+          height: 600,
+          x: 120 + Math.random() * 200,
+          y: 120 + Math.random() * 150,
+          isFocused: true,
+          isMaximized: false,
+          isMinimized: false,
+          zIndex: 10,
+          resizable: true,
+          appType: "vscode",
         });
       },
     },

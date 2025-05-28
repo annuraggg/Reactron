@@ -10,4 +10,9 @@ export const extensionToApp: Record<string, string> = {
   mp4: "videoplayer",
   webm: "videoplayer",
   mov: "videoplayer",
+  js: "vscode",
+  ts: "vscode",
+  json: "vscode",
+  md: "vscode",
+  css: "vscode",
 };
