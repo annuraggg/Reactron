@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  IconDeviceGamepad,
   IconLogout,
   IconSearch,
   IconWindow,
@@ -11,6 +12,7 @@ import useWindowStore from "../../store/windowStore";
 import TaskManager from "../../apps/TaskManager/TaskManager";
 import VsCode from "../../apps/VSCode/VSCode";
 import VsCodeIcon from "../../apps/VSCode/VSCodeIcon";
+import Doom from "../../apps/Doom/Doom";
 
 export type StartMenuApp = {
   name: string;
@@ -155,6 +157,26 @@ export default function StartMenu({
           zIndex: 10,
           resizable: true,
           appType: "vscode",
+        });
+      },
+    },
+    {
+      name: "DOOM",
+      icon: <IconDeviceGamepad color="#ed1c24" />,
+      action: () => {
+        onClose();
+        addWindow({
+          id: `doom-${Date.now()}`,
+          title: "DOOM",
+          icon: <IconDeviceGamepad color="#ed1c24" />,
+          content: <Doom />,
+          width: 1200,
+          height: 1000,
+          isFocused: true,
+          isMaximized: true,
+          isMinimized: false,
+          zIndex: 10,
+          resizable: true,
         });
       },
     },

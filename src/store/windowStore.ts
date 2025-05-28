@@ -54,13 +54,13 @@ const useWindowStore = create<WindowStore>((set, get) => ({
     const newWindow: Window = {
       ...window,
       zIndex: nextZIndex,
-      isFocused: true,
+      isFocused: window.isFocused ?? true,
       width: window.width || 500,
       height: window.height || 400,
       x: window.x || 100,
       y: window.y || 100,
-      isMaximized: false,
-      isMinimized: false,
+      isMaximized: window.isMaximized ?? false,
+      isMinimized: window.isMinimized ?? false,
       resizable: window.resizable ?? true,
     };
 
